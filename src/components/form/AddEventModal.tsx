@@ -1,17 +1,12 @@
 import { Modal } from 'antd'
 import AddEventForm from './AddEventForm'
 import { AddEventModalProps } from '../../types/types'
-import dayjs from 'dayjs'
 
 const AddEventModal: React.FC<AddEventModalProps> = ({
   visible,
   setVisible,
   selectedDate
 }) => {
-  const formattedDate = dayjs(selectedDate, 'DD-MM-YYYY HH:mm A').format(
-    'DD-MM-YYYY'
-  )
-
   return (
     <>
       {visible && (
@@ -24,9 +19,10 @@ const AddEventModal: React.FC<AddEventModalProps> = ({
           centered
           width={700}
           footer={null}
-          title={`Create Event for ${formattedDate}`}
+          title=''
+          closable={false}
         >
-          <AddEventForm date={selectedDate} />
+          <AddEventForm date={selectedDate} setVisible={setVisible} />
         </Modal>
       )}
     </>

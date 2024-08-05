@@ -3,26 +3,27 @@ import dayjs, { Dayjs } from 'dayjs'
 import { useState } from 'react'
 import AddEventModal from '../form/AddEventModal'
 import CalendarHeader from './CalendarHeader'
+import RenderCell from './RenderCell'
 
 const CalendarView: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string>('')
   const [visible, setVisible] = useState<boolean>(false)
-  const [currentDate, setCurrentDate] = useState<Dayjs>(dayjs())
+  const [currentMonth, setCurrentMonth] = useState<Dayjs>(dayjs())
   const [isChangingMonth, setIsChangingMonth] = useState<boolean>(false)
 
   const handleSelect = (date: Dayjs) => {
     const today = dayjs()
     if (
-      date.isSame(currentDate, 'month') &&
+      date.isSame(currentMonth, 'month') &&
       date.isAfter(today.startOf('day'))
     ) {
-      setSelectedDate(dayjs(date).format('DD-MM-YYYY hh:mm A'))
+      setSelectedDate(dayjs(date).format('DD-MM-YYYY'))
       setVisible(true)
     }
   }
 
   const handlePanelChange = (date: Dayjs) => {
-    setCurrentDate(date)
+    setCurrentMonth(date)
     setIsChangingMonth(false)
   }
 
@@ -31,18 +32,16 @@ const CalendarView: React.FC = () => {
       <Calendar
         disabledDate={(current: Dayjs) => {
           const today = dayjs()
-          return (
-            current.isBefore(today, 'day') || !current.isSame(today, 'month')
-          )
+          return current.isBefore(today, 'day')
         }}
         onSelect={(date) => {
           if (!isChangingMonth) handleSelect(date)
         }}
         headerRender={(props) => (
-          <CalendarHeader {...props} setCurrentDate={setCurrentDate} />
+          <CalendarHeader {...props} setCurrentMonth={setCurrentMonth} />
         )}
-        value={currentDate}
         onPanelChange={handlePanelChange}
+        cellRender={RenderCell}
       />
       <AddEventModal
         visible={visible}

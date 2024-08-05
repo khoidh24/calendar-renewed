@@ -4,7 +4,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 
 const useCalendar = create<EventState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       events: [],
       addEvent: (event: Event) =>
         set((state) => ({
@@ -19,7 +19,9 @@ const useCalendar = create<EventState>()(
           events: state.events.map((e) =>
             e.id === event.id ? { ...e, ...event } : e
           )
-        }))
+        })),
+      getEventsByDate: (date: string) =>
+        get().events.filter((event) => event.startDate === date)
     }),
     {
       name: 'calendar-storage',

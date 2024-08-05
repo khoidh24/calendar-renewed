@@ -1,10 +1,13 @@
+import { FormListFieldData } from 'antd'
 import { Dayjs } from 'dayjs'
 
 export interface Event {
-  id: string
-  date: Dayjs
-  title: string
+  id?: string
+  title?: string // Make title optional
   description?: string
+  startDate: string
+  startTime?: string
+  endTime?: string
   location?: string
 }
 
@@ -13,6 +16,7 @@ export interface EventState {
   addEvent: (event: Event) => void
   removeEvent: (id: string) => void
   updateEvent: (event: Event) => void
+  getEventsByDate: (date: string) => Event[]
 }
 
 export interface AddEventModalProps {
@@ -28,16 +32,16 @@ export interface AddEventFormProps {
 export interface CalendarHeaderProps {
   value: Dayjs
   onChange: (date: Dayjs) => void
-  setCurrentDate: (date: Dayjs) => void
+  setCurrentMonth: (date: Dayjs) => void
 }
 
 export interface FormValues {
-  forms: {
+  events: {
     title?: string
     description?: string
-    fromDate?: Dayjs
-    endDate?: Dayjs
+    startDate?: Dayjs
     startTime?: Dayjs
+    endDate?: Dayjs
     endTime?: Dayjs
   }[]
 }
@@ -48,4 +52,8 @@ export interface ChildFormProps {
   formItemName: number
   showRemove: boolean
   index: number
+}
+
+export interface FormFieldsProps {
+  field: FormListFieldData
 }

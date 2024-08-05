@@ -6,10 +6,25 @@
 
 @layer base {
   body {
-    @apply font-roboto antialiased;
+    @apply font-roboto antialiased bg-[#E9ECF3] bg-no-repeat !important;
   }
 }
 
-/* .ant-picker-calendar-header {
-  @apply hidden !important;
-} */
+::-webkit-scrollbar {
+  @apply w-[2px];
+}
+::-webkit-scrollbar-track {
+  @apply bg-white;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-[#333];
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-glassmorphism;
+}
+.ant-form-item-label {
+  @apply font-bold !important;
+}
+.ant-picker-calendar-date-value {
+  @apply text-[16px] !important;
+}
