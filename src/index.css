@@ -37,7 +37,9 @@
 }
 
 .ant-input-disabled,
-.ant-picker-disabled,
-.ant-select-disabled {
+.ant-picker-disabled {
 	@apply bg-white text-black cursor-default !important;
+}
+.ant-select-disabled .ant-select-selector {
+	@apply cursor-default bg-white text-black !important;
 }
