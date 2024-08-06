@@ -1,59 +1,81 @@
-import { FormListFieldData } from 'antd'
+import { FormListFieldData, FormInstance } from 'antd'
 import { Dayjs } from 'dayjs'
 
 export interface Event {
-  id?: string
-  title?: string // Make title optional
-  description?: string
-  startDate: string
-  startTime?: string
-  endTime?: string
-  location?: string
+	id?: string
+	title: string
+	description: string
+	startDate: string
+	during: string
+	address?: string
+	city?: string
+	district?: string
+	ward?: string
 }
 
 export interface EventState {
-  events: Event[]
-  addEvent: (event: Event) => void
-  removeEvent: (id: string) => void
-  updateEvent: (event: Event) => void
-  getEventsByDate: (date: string) => Event[]
+	events: Event[]
+	addEvent: (event: Event) => void
+	removeEvent: (id: string) => void
+	updateEvent: (event: Event) => void
+	getEventsByDate: (date: string) => Event[]
 }
 
 export interface AddEventModalProps {
-  visible: boolean
-  selectedDate: string
-  setVisible: (visible: boolean) => void
-}
-
-export interface AddEventFormProps {
-  date: string
+	selectedDate: string
+	visible: boolean
+	setVisible: (visible: boolean) => void
+	event: Event
+	viewCard: boolean
 }
 
 export interface CalendarHeaderProps {
-  value: Dayjs
-  onChange: (date: Dayjs) => void
-  setCurrentMonth: (date: Dayjs) => void
+	value: Dayjs
+	onChange: (date: Dayjs) => void
+	setCurrentMonth: (date: Dayjs) => void
 }
 
 export interface FormValues {
-  events: {
-    title?: string
-    description?: string
-    startDate?: Dayjs
-    startTime?: Dayjs
-    endDate?: Dayjs
-    endTime?: Dayjs
-  }[]
+	events: {
+		title?: string
+		description?: string
+		startDate?: Dayjs
+		during?: Dayjs
+		endTime?: Dayjs
+	}[]
 }
 
 export interface ChildFormProps {
-  title: string
-  onRemove: () => void
-  formItemName: number
-  showRemove: boolean
-  index: number
+	title: string
+	onRemove: () => void
+	formItemName: number
+	showRemove: boolean
+	index: number
 }
 
 export interface FormFieldsProps {
-  field: FormListFieldData
+	field: FormListFieldData
+	form?: FormInstance
+	viewCard: boolean
+}
+
+export interface FormListProps {
+	form: FormInstance
+	viewCard: boolean
+}
+
+export interface RenderCellProps {
+	date: Dayjs
+	onEventClick: (event: any) => void
+}
+
+export interface ViewCardProps {
+	event: Event
+}
+
+export interface AddEventFormProps {
+	date: string
+	setVisible: (visible: boolean) => void
+	viewCard: boolean
+	event: Event
 }

@@ -5,26 +5,39 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply font-roboto antialiased bg-[#E9ECF3] bg-no-repeat !important;
-  }
+	body {
+		@apply font-roboto antialiased bg-[#E9ECF3] bg-no-repeat !important;
+	}
 }
 
 ::-webkit-scrollbar {
-  @apply w-[2px];
+	@apply w-[2px];
 }
 ::-webkit-scrollbar-track {
-  @apply bg-white;
+	@apply bg-white;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-[#333];
+	@apply bg-[#333];
 }
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-glassmorphism;
+	@apply bg-glassmorphism;
 }
 .ant-form-item-label {
-  @apply font-bold !important;
+	@apply font-bold !important;
 }
 .ant-picker-calendar-date-value {
-  @apply text-[16px] !important;
+	@apply text-[16px] !important;
+}
+.ant-typography-edit-content {
+	@apply border-none m-0 outline-none p-0 !important;
+}
+.detail-title,
+.detail-p {
+	@apply mb-0 !important;
+}
+
+.ant-input-disabled,
+.ant-picker-disabled,
+.ant-select-disabled {
+	@apply bg-white text-black cursor-default !important;
 }
