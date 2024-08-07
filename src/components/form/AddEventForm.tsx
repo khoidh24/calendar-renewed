@@ -46,6 +46,7 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
 
 	const showDeleteConfirm = () => {
 		Modal.confirm({
+			centered: true,
 			title: 'Are you sure delete this event?',
 			content: 'This action cannot be undone.',
 			okText: 'Yes',
