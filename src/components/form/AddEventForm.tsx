@@ -22,7 +22,7 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
 	const removeEvent = useCalendar((state) => state.removeEvent)
 
 	const onFinish = (values: { events: Event[] }) => {
-		const updatedValues = values.events.map((event: Event, index: number) => {
+		const updatedValues = values.events.map((event: Event) => {
 			return {
 				...event,
 				id: event.id || uuidv4(),

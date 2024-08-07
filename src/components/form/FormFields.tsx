@@ -27,18 +27,18 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 		}))
 	)
 
-	const renderField = (name: string, component: React.ReactNode) => {
-		if (viewCard && !form?.getFieldValue(['events', field.name, name])) {
-			return null
-		}
-		return component
-	}
-
 	const filterOption = (input: string, option: any) => {
 		if (option?.label) {
 			return unAccent(option.label).includes(unAccent(input))
 		}
 		return false
+	}
+
+	const renderField = (name: string, component: React.ReactNode) => {
+		if (viewCard && !form?.getFieldValue(['events', field.name, name])) {
+			return null
+		}
+		return component
 	}
 
 	return (
@@ -85,6 +85,9 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 									className='w-[100%]'
 									disabledDate={(current) => current.isBefore(dayjs(), 'day')}
 									needConfirm={false}
+									onChange={() => {
+										form.validateFields([['events', field.name, 'during']])
+									}}
 								/>
 							</Form.Item>
 						</Col>
@@ -100,8 +103,18 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 										},
 										{
 											validator: async (_, value) => {
-												if (value && value[0] && dayjs(value[0]).isBefore(dayjs())) {
-													return Promise.reject('Start time must be after current time')
+												const startDate = form.getFieldValue([
+													'events',
+													field.name,
+													'startDate',
+												])
+												if (value && value[0] && startDate) {
+													const startDateTime = dayjs(startDate)
+														.hour(dayjs(value[0]).hour())
+														.minute(dayjs(value[0]).minute())
+													if (startDateTime.isBefore(dayjs())) {
+														return Promise.reject('Start time must be after current time')
+													}
 												}
 												return Promise.resolve()
 											},
@@ -120,25 +133,31 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 					</Row>
 				</Form.Item>
 			)}
-			{renderField(
-				'city',
+			{viewCard &&
+			!form?.getFieldValue(['events', field.name, 'city']) &&
+			!form?.getFieldValue(['events', field.name, 'district']) &&
+			!form?.getFieldValue(['events', field.name, 'ward']) &&
+			!form?.getFieldValue(['events', field.name, 'address']) ? null : (
 				<Form.Item label='Location'>
-					<Form.Item name={[field.name, 'city']}>
-						<Select
-							allowClear
-							showSearch
-							optionFilterProp='label'
-							placeholder='City'
-							options={cityOptions}
-							filterOption={filterOption}
-							onChange={() => {
-								form?.resetFields([
-									['events', field.name, 'district'],
-									['events', field.name, 'ward'],
-								])
-							}}
-						/>
-					</Form.Item>
+					{renderField(
+						'city',
+						<Form.Item name={[field.name, 'city']}>
+							<Select
+								allowClear
+								showSearch
+								optionFilterProp='label'
+								placeholder='City'
+								options={cityOptions}
+								filterOption={filterOption}
+								onChange={() => {
+									form?.resetFields([
+										['events', field.name, 'district'],
+										['events', field.name, 'ward'],
+									])
+								}}
+							/>
+						</Form.Item>
+					)}
 					<Row gutter={24}>
 						{renderField(
 							'district',
