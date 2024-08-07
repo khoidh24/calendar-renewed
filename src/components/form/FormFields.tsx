@@ -28,7 +28,7 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 	)
 
 	const renderField = (name: string, component: React.ReactNode) => {
-		if (viewCard && !form.getFieldValue(['events', field.name, name])) {
+		if (viewCard && !form?.getFieldValue(['events', field.name, name])) {
 			return null
 		}
 		return component
@@ -132,7 +132,7 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 							options={cityOptions}
 							filterOption={filterOption}
 							onChange={() => {
-								form.resetFields([
+								form?.resetFields([
 									['events', field.name, 'district'],
 									['events', field.name, 'ward'],
 								])
@@ -150,19 +150,19 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 												allowClear
 												filterOption={filterOption}
 												disabled={
-													!form.getFieldValue(['events', field.name, 'city']) || viewCard
+													!form?.getFieldValue(['events', field.name, 'city']) || viewCard
 												}
 												showSearch
 												optionFilterProp='label'
 												placeholder='District'
 												options={
-													form.getFieldValue(['events', field.name, 'city'])
+													form?.getFieldValue(['events', field.name, 'city'])
 														? sortOptions(
 																Object.values(districts)
 																	.filter(
 																		(district) =>
 																			district.parent_code ===
-																			form.getFieldValue(['events', field.name, 'city'])
+																			form?.getFieldValue(['events', field.name, 'city'])
 																	)
 																	.map((district) => ({
 																		label: district.name_with_type,
@@ -172,7 +172,7 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 														: []
 												}
 												onChange={() => {
-													form.resetFields([['events', field.name, 'ward']])
+													form?.resetFields([['events', field.name, 'ward']])
 												}}
 											/>
 										</Form.Item>
@@ -196,18 +196,19 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 												filterOption={filterOption}
 												optionFilterProp='label'
 												disabled={
-													!form.getFieldValue(['events', field.name, 'district']) || viewCard
+													!form?.getFieldValue(['events', field.name, 'district']) ||
+													viewCard
 												}
 												showSearch
 												placeholder='Ward'
 												options={
-													form.getFieldValue(['events', field.name, 'district'])
+													form?.getFieldValue(['events', field.name, 'district'])
 														? sortOptions(
 																Object.values(wards)
 																	.filter(
 																		(ward) =>
 																			ward.parent_code ===
-																			form.getFieldValue(['events', field.name, 'district'])
+																			form?.getFieldValue(['events', field.name, 'district'])
 																	)
 																	.map((ward) => ({
 																		label: ward.name_with_type,
