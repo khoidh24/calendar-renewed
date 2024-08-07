@@ -1,37 +1,61 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { Button, Form, message } from 'antd'
+import { Button, Form, message, Modal } from 'antd'
 import dayjs from 'dayjs'
 import FormList from './FormList'
 import useCalendar from '../../storage/store'
 import { AddEventFormProps, Event } from '../../types/types'
+import { useState } from 'react'
+import { v4 as uuidv4 } from 'uuid'
 
 const AddEventForm: React.FC<AddEventFormProps> = ({
 	date,
 	setVisible,
 	viewCard,
+	setViewCard,
 	event,
 }) => {
 	const [form] = Form.useForm()
+	const [isEdit, setIsEdit] = useState<boolean>(false)
 	const addEvent = useCalendar((state) => state.addEvent)
+	const updateEvent = useCalendar((state) => state.updateEvent)
+	const removeEvent = useCalendar((state) => state.removeEvent)
 
 	const onFinish = (values: { events: Event[] }) => {
 		const updatedValues = values.events.map((event: Event, index: number) => {
 			return {
 				...event,
+				id: event.id || uuidv4(),
 				title: event.title || `Event ${index + 1}`,
 				description: event.description || 'No description provided',
 				startDate: dayjs(event.startDate).format('DD-MM-YYYY'),
 				during: event.during,
 			}
 		})
-		updatedValues.forEach((event: any) => addEvent(event))
+
+		if (isEdit && event) {
+			updateEvent({ ...updatedValues[0], id: event.id })
+			message.success('Event updated successfully!', 2)
+		} else {
+			updatedValues.forEach((event: Event) => addEvent(event))
+			message.success('Event added successfully!', 2)
+		}
 		console.log('Received values of form:', { events: updatedValues })
-		message.open({
-			content: 'Event added successfully!',
-			duration: 2,
-			type: 'success',
-		})
 		setVisible(false)
+	}
+
+	const showDeleteConfirm = () => {
+		Modal.confirm({
+			title: 'Are you sure delete this event?',
+			content: 'This action cannot be undone.',
+			okText: 'Yes',
+			okType: 'danger',
+			cancelText: 'No',
+			onOk() {
+				removeEvent(event.id)
+				setVisible(false)
+				message.success('Event deleted successfully!', 2)
+			},
+		})
 	}
 
 	return (
@@ -39,6 +63,9 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
 			<Form
 				form={form}
 				name='events_form'
+				disabled={viewCard}
+				className='form-detail'
+				variant={viewCard && isEdit ? 'borderless' : 'outlined'}
 				initialValues={
 					viewCard
 						? {
@@ -68,18 +95,13 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
 				autoComplete='off'
 				layout='vertical'
 			>
-				<FormList form={form} viewCard={viewCard} />
-				{viewCard ? (
-					<Form.Item>
-						<Button
-							type='primary'
-							htmlType='submit'
-							className='w-[100%] mt-8 shadow-lg'
-						>
-							Update
-						</Button>
-					</Form.Item>
-				) : (
+				<FormList
+					form={form}
+					viewCard={viewCard}
+					isEdit={isEdit}
+					setIsEdit={setIsEdit}
+				/>
+				{!viewCard && (
 					<Form.Item>
 						<Button
 							type='primary'
@@ -91,6 +113,27 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
 					</Form.Item>
 				)}
 			</Form>
+			{viewCard && (
+				<>
+					<Button
+						type='primary'
+						className='w-[100%] shadow-lg'
+						onClick={() => {
+							setIsEdit(true)
+							setViewCard(false)
+						}}
+					>
+						Edit
+					</Button>
+					<Button
+						danger
+						className='w-[100%] mt-8 shadow-lg'
+						onClick={showDeleteConfirm}
+					>
+						Delete
+					</Button>
+				</>
+			)}
 		</>
 	)
 }

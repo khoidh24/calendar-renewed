@@ -2,7 +2,7 @@ import { FormListFieldData, FormInstance } from 'antd'
 import { Dayjs } from 'dayjs'
 
 export interface Event {
-	id?: string
+	id: string
 	title: string
 	description: string
 	startDate: string
@@ -27,6 +27,7 @@ export interface AddEventModalProps {
 	setVisible: (visible: boolean) => void
 	event: Event
 	viewCard: boolean
+	setViewCard: (viewCard: boolean) => void
 }
 
 export interface CalendarHeaderProps {
@@ -62,6 +63,8 @@ export interface FormFieldsProps {
 export interface FormListProps {
 	form: FormInstance
 	viewCard: boolean
+	isEdit: boolean
+	setIsEdit: (isEdit: boolean) => void
 }
 
 export interface RenderCellProps {
@@ -77,5 +80,6 @@ export interface AddEventFormProps {
 	date: string
 	setVisible: (visible: boolean) => void
 	viewCard: boolean
+	setViewCard: (viewCard: boolean) => void
 	event: Event
 }

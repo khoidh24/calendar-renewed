@@ -3,7 +3,7 @@ import { Button, Form } from 'antd'
 import FormFields from './FormFields'
 import { FormListProps } from '../../types/types'
 
-const FormList: React.FC<FormListProps> = ({ form, viewCard }) => {
+const FormList: React.FC<FormListProps> = ({ form, viewCard, isEdit }) => {
 	return (
 		<>
 			<Form.List name='events'>
@@ -25,7 +25,7 @@ const FormList: React.FC<FormListProps> = ({ form, viewCard }) => {
 							</div>
 						))}
 
-						{!viewCard && (
+						{!viewCard && !isEdit && (
 							<Button
 								icon={<PlusCircleOutlined />}
 								className='w-[100%]'

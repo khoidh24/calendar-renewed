@@ -65,6 +65,7 @@ const CalendarView: React.FC = () => {
 				selectedDate={selectedDate}
 				event={selectedEvent}
 				viewCard={viewCard}
+				setViewCard={setViewCard}
 			/>
 		</>
 	)

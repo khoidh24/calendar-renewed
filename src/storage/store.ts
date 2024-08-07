@@ -14,12 +14,22 @@ const useCalendar = create<EventState>()(
 				set((state) => ({
 					events: state.events.filter((event) => event.id !== id),
 				})),
-			updateEvent: (event: Event) =>
-				set((state) => ({
-					events: state.events.map((e) =>
-						e.id === event.id ? { ...e, ...event } : e
-					),
-				})),
+			updateEvent: (updatedEvent: Event) =>
+				set((state) => {
+					const eventIndex = state.events.findIndex((e) => e.id === updatedEvent.id)
+					if (eventIndex !== -1) {
+						const updatedEvents = [...state.events]
+						updatedEvents[eventIndex] = {
+							...updatedEvents[eventIndex],
+							...updatedEvent,
+						}
+						return {
+							events: updatedEvents,
+						}
+					}
+					// If the event does not exist, do nothing
+					return state
+				}),
 			getEventsByDate: (date: string) =>
 				get().events.filter((event) => event.startDate === date),
 		}),
