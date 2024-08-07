@@ -26,7 +26,7 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
 			return {
 				...event,
 				id: event.id || uuidv4(),
-				title: event.title || `Event ${index + 1}`,
+				title: event.title || `No title event`,
 				description: event.description || 'No description provided',
 				startDate: dayjs(event.startDate).format('DD-MM-YYYY'),
 				during: event.during,
