@@ -15,6 +15,7 @@ import cities from '../../data/city.json'
 import districts from '../../data/district.json'
 import wards from '../../data/ward.json'
 import sortOptions from '../../utils/sortOptions'
+import { unAccent } from '../../utils/unAccent'
 
 const { TextArea } = Input
 
@@ -31,6 +32,13 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 			return null
 		}
 		return component
+	}
+
+	const filterOption = (input: string, option: any) => {
+		if (option?.label) {
+			return unAccent(option.label).includes(unAccent(input))
+		}
+		return false
 	}
 
 	return (
@@ -52,7 +60,7 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 				'description',
 				<Form.Item name={[field.name, 'description']} label='Description'>
 					<TextArea
-						autoSize={viewCard ? null : { minRows: 5, maxRows: 9 }}
+						autoSize={viewCard ? { maxRows: 1 } : { minRows: 5, maxRows: 9 }}
 						placeholder='Detail of the event...'
 					/>
 				</Form.Item>
@@ -83,11 +91,28 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 						{renderField(
 							'during',
 							<Col xs={24} sm={12}>
-								<Form.Item name={[field.name, 'during']}>
+								<Form.Item
+									name={[field.name, 'during']}
+									rules={[
+										{
+											required: true,
+											message: 'Duration is required',
+										},
+										{
+											validator: async (_, value) => {
+												if (value && value[0] && dayjs(value[0]).isBefore(dayjs())) {
+													return Promise.reject('Start time must be after current time')
+												}
+												return Promise.resolve()
+											},
+										},
+									]}
+								>
 									<TimePicker.RangePicker
 										format={'hh:mm A'}
 										className='w-[100%]'
 										needConfirm={false}
+										minuteStep={15}
 									/>
 								</Form.Item>
 							</Col>
@@ -100,9 +125,12 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 				<Form.Item label='Location'>
 					<Form.Item name={[field.name, 'city']}>
 						<Select
+							allowClear
 							showSearch
+							optionFilterProp='label'
 							placeholder='City'
 							options={cityOptions}
+							filterOption={filterOption}
 							onChange={() => {
 								form.resetFields([
 									['events', field.name, 'district'],
@@ -119,10 +147,13 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 									{() => (
 										<Form.Item name={[field.name, 'district']} noStyle>
 											<Select
+												allowClear
+												filterOption={filterOption}
 												disabled={
 													!form.getFieldValue(['events', field.name, 'city']) || viewCard
 												}
 												showSearch
+												optionFilterProp='label'
 												placeholder='District'
 												options={
 													form.getFieldValue(['events', field.name, 'city'])
@@ -161,6 +192,9 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 									{() => (
 										<Form.Item name={[field.name, 'ward']} noStyle>
 											<Select
+												allowClear
+												filterOption={filterOption}
+												optionFilterProp='label'
 												disabled={
 													!form.getFieldValue(['events', field.name, 'district']) || viewCard
 												}

@@ -6,6 +6,7 @@ import useCalendar from '../../storage/store'
 import { AddEventFormProps, Event } from '../../types/types'
 import { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
+import roundToNearest15Minutes from '../../utils/roundToFifteenMinutes'
 
 const AddEventForm: React.FC<AddEventFormProps> = ({
 	date,
@@ -86,7 +87,10 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
 								events: [
 									{
 										startDate: dayjs(date, 'DD-MM-YYYY'),
-										during: [dayjs(), dayjs().add(1, 'hour')],
+										during: [
+											roundToNearest15Minutes(dayjs()),
+											roundToNearest15Minutes(dayjs()).add(1, 'hour'),
+										],
 									},
 								],
 						  }
@@ -121,6 +125,11 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
 						onClick={() => {
 							setIsEdit(true)
 							setViewCard(false)
+							message.open({
+								type: 'info',
+								content: 'You are in edit mode.',
+								duration: 2,
+							})
 						}}
 					>
 						Edit

@@ -34,11 +34,6 @@ const CalendarView: React.FC = () => {
 		setSelectedEvent(event)
 		setVisible(true)
 		setViewCard(true)
-		message.open({
-			content: 'You can modify any field during view mode.',
-			duration: 2,
-			type: 'info',
-		})
 	}
 
 	return (
