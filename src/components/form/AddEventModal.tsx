@@ -8,6 +8,7 @@ const AddEventModal: React.FC<AddEventModalProps> = ({
 	selectedDate,
 	event,
 	viewCard,
+	setViewCard,
 }) => {
 	return (
 		<>
@@ -29,6 +30,7 @@ const AddEventModal: React.FC<AddEventModalProps> = ({
 						setVisible={setVisible}
 						viewCard={viewCard}
 						event={event}
+						setViewCard={setViewCard}
 					/>
 				</Modal>
 			)}

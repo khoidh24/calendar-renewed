@@ -36,10 +36,17 @@
 	@apply mb-0 !important;
 }
 
-.ant-input-disabled,
-.ant-picker-disabled {
-	@apply bg-white text-black cursor-default !important;
+.form-detail.view-mode .ant-input,
+.form-detail.view-mode .ant-picker,
+.form-detail.view-mode .ant-picker-input {
+	@apply bg-transparent text-black cursor-default outline-none border-none !important;
 }
-.ant-select-disabled .ant-select-selector {
-	@apply cursor-default bg-white text-black !important;
+.form-detail.view-mode .ant-picker .ant-picker-input > input[disabled] {
+	@apply bg-transparent text-black cursor-default outline-none border-none !important;
+}
+.form-detail.view-mode .ant-select-arrow {
+	@apply hidden !important;
+}
+.form-detail.view-mode .ant-select .ant-select-selector {
+	@apply cursor-default bg-transparent text-black outline-none border-none !important;
 }
