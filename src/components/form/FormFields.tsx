@@ -85,6 +85,9 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 									className='w-[100%]'
 									disabledDate={(current) => current.isBefore(dayjs(), 'day')}
 									needConfirm={false}
+									onChange={() => {
+										form.validateFields([['events', field.name, 'during']])
+									}}
 								/>
 							</Form.Item>
 						</Col>
@@ -100,8 +103,18 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 										},
 										{
 											validator: async (_, value) => {
-												if (value && value[0] && dayjs(value[0]).isBefore(dayjs())) {
-													return Promise.reject('Start time must be after current time')
+												const startDate = form.getFieldValue([
+													'events',
+													field.name,
+													'startDate',
+												])
+												if (value && value[0] && startDate) {
+													const startDateTime = dayjs(startDate)
+														.hour(dayjs(value[0]).hour())
+														.minute(dayjs(value[0]).minute())
+													if (startDateTime.isBefore(dayjs())) {
+														return Promise.reject('Start time must be after current time')
+													}
 												}
 												return Promise.resolve()
 											},
