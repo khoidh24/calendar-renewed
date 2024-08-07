@@ -1,4 +1,4 @@
-import { Calendar, message } from 'antd'
+import { Calendar } from 'antd'
 import dayjs, { Dayjs } from 'dayjs'
 import { useState } from 'react'
 import AddEventModal from '../form/AddEventModal'
