@@ -67,7 +67,7 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 			)}
 			{renderField(
 				'startDate',
-				<Form.Item label='Time' className='mb-0'>
+				<Form.Item label='Time' className='mb-0' required={true}>
 					<Row gutter={24}>
 						<Col xs={24} sm={12}>
 							<Form.Item
@@ -114,6 +114,9 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 														.minute(dayjs(value[0]).minute())
 													if (startDateTime.isBefore(dayjs())) {
 														return Promise.reject('Start time must be after current time')
+													}
+													if (dayjs(value[0]).isSame(dayjs(value[1]), 'minute')) {
+														return Promise.reject('Start time must be before end time')
 													}
 												}
 												return Promise.resolve()
