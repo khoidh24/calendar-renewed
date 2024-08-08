@@ -30,9 +30,12 @@ const FormList: React.FC<FormListProps> = ({ form, viewCard, isEdit }) => {
 								icon={<PlusCircleOutlined />}
 								className='w-[100%]'
 								type='dashed'
-								onClick={() => add()}
+								onClick={() => {
+									const firstEvent = form.getFieldValue(['events', 0])
+									add({ startDate: firstEvent?.startDate })
+								}}
 							>
-								Add Item
+								Add more event
 							</Button>
 						)}
 					</>
