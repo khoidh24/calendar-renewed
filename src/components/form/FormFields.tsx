@@ -161,7 +161,7 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 					<Row gutter={24}>
 						{renderField(
 							'district',
-							<Col xs={24} sm={14}>
+							<Col xs={24} sm={12}>
 								<Form.Item dependencies={[['events', field.name, 'city']]}>
 									{() => (
 										<Form.Item name={[field.name, 'district']} noStyle>
@@ -201,7 +201,7 @@ const FormFields: React.FC<FormFieldsProps> = ({ field, form, viewCard }) => {
 						)}
 						{renderField(
 							'ward',
-							<Col xs={24} sm={10}>
+							<Col xs={24} sm={12}>
 								<Form.Item
 									dependencies={[
 										['events', field.name, 'city'],
