@@ -17,7 +17,7 @@ const FormList: React.FC<FormListProps> = ({ form, viewCard, isEdit }) => {
 										type='dashed'
 										danger
 										onClick={() => remove(field.name)}
-										className='w-[100%] mb-10'
+										className='w-full mb-10'
 									>
 										<CloseOutlined /> Remove this form
 									</Button>
