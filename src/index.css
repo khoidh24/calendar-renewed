@@ -5,48 +5,91 @@
 @tailwind utilities;
 
 @layer base {
-	body {
-		@apply font-roboto antialiased bg-[#E9ECF3] bg-no-repeat !important;
-	}
+ body {
+  @apply font-roboto antialiased bg-no-repeat !important;
+ }
 }
 
 ::-webkit-scrollbar {
-	@apply w-[2px];
+ @apply w-[2px];
 }
 ::-webkit-scrollbar-track {
-	@apply bg-white;
+ @apply bg-white;
 }
 ::-webkit-scrollbar-thumb {
-	@apply bg-[#333];
+ @apply bg-[#333];
 }
 ::-webkit-scrollbar-thumb:hover {
-	@apply bg-glassmorphism;
+ @apply bg-glassmorphism;
 }
 .ant-form-item-label {
-	@apply font-bold !important;
+ @apply font-bold !important;
 }
 .ant-picker-calendar-date-value {
-	@apply text-[16px] !important;
-}
-.ant-typography-edit-content {
-	@apply border-none m-0 outline-none p-0 !important;
-}
-.detail-title,
-.detail-p {
-	@apply mb-0 !important;
+ @apply text-[16px] !important;
 }
 
-.form-detail.view-mode .ant-input,
-.form-detail.view-mode .ant-picker,
-.form-detail.view-mode .ant-picker-input {
-	@apply bg-transparent text-black cursor-default outline-none border-none !important;
+.detail-title,
+.detail-p {
+ @apply mb-0 !important;
 }
-.form-detail.view-mode .ant-picker .ant-picker-input > input[disabled] {
-	@apply bg-transparent text-black cursor-default outline-none border-none !important;
+
+.ant-input,
+.ant-select-selector,
+.ant-picker {
+ @apply bg-transparent text-black outline-none rounded-none border-l-0 border-r-0 border-t-0 focus:border-[#333] !important;
 }
-.form-detail.view-mode .ant-select-arrow {
-	@apply hidden !important;
+
+.ant-input-disabled,
+.ant-select-selector:has(input[disabled]),
+.ant-picker-disabled {
+ @apply border-none bg-transparent cursor-default !important;
 }
-.form-detail.view-mode .ant-select .ant-select-selector {
-	@apply cursor-default bg-transparent text-black outline-none border-none !important;
+
+.select-disabled-not-view-mode {
+ @apply bg-[rgba(0,_0,_0,_0.04)];
+}
+
+.ant-select-disabled .ant-select-arrow {
+ @apply hidden;
+}
+
+.ant-picker-disabled .ant-picker-suffix,
+.ant-picker-range.ant-picker-disabled .ant-picker-active-bar,
+.ant-picker-range.ant-picker-disabled .ant-picker-range-separator {
+ @apply hidden;
+}
+
+.ant-picker-disabled input {
+ @apply cursor-default text-black !important;
+}
+
+.address .ant-input {
+ @apply bg-transparent border-l-0 border-r-0 border-t-0 rounded-none !important;
+}
+
+.ant-picker-content thead tr th {
+ @apply text-center px-0 !important;
+}
+
+.ant-picker-calendar-date-value {
+ @apply text-center;
+}
+
+.ant-radio-button-wrapper {
+ @apply bg-transparent text-black !important;
+}
+
+.ant-input-number-group-addon {
+ @apply min-w-[74px];
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+ -webkit-appearance: none;
+ margin: 0;
+}
+
+input[type='number'] {
+ -moz-appearance: textfield;
 }
