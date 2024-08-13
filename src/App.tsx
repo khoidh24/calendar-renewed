@@ -12,16 +12,8 @@ const App = () => {
 							fullPanelBg: 'transparent',
 							itemActiveBg: '#d9dce6',
 						},
-						Modal: {
-							contentBg: '#E9ECF3',
-						},
-						Button: {
-							defaultBg: '#e9ecf3',
-							defaultHoverBg: '#E9ECF3',
-							defaultActiveBg: '#E9ECF3',
-						},
 						Form: {
-							labelFontSize: 16,
+							labelFontSize: 14,
 						},
 					},
 					token: {
