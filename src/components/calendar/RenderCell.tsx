@@ -26,21 +26,21 @@ const RenderCell: React.FC<RenderCellProps> = ({date, onEventClick}) => {
             })`}
       >
        <li
-        className='bg-[#227E22] px-3 rounded-md hover:bg-[#1b641b]'
+        className='bg-[#227E22] px-3 rounded-md hover:bg-[#1b641b] mb-2'
         onClick={(e) => {
          e.stopPropagation()
          onEventClick(event)
         }}
        >
         <Paragraph className='text-[#f9f9f9] text-[8px] md:text-[10px] lg:text-[12px] xl:text-[14px]'>
-         {event.title}
-        </Paragraph>
-        <span className='text-[#f9f9f9] text-[8px] md:text-[10px] lg:text-[12px] xl:text-[14px]'>{` (${
-         event.during[0] ? dayjs(event.during[0]).format('hh:mm A') : 'N/A'
-        } - 
+         {event.title}{' '}
+         <span className='text-[#f9f9f9] text-[8px] md:text-[10px] lg:text-[12px] xl:text-[14px]'>{` (${
+          event.during[0] ? dayjs(event.during[0]).format('hh:mm A') : 'N/A'
+         } - 
             ${
              event.during[1] ? dayjs(event.during[1]).format('hh:mm A') : 'N/A'
             })`}</span>
+        </Paragraph>
        </li>
       </Tooltip>
      )
