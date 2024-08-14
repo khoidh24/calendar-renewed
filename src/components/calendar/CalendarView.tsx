@@ -4,7 +4,6 @@ import {useState} from 'react'
 import AddEventModal from '../form/AddEventModal'
 import RenderCell from './RenderCell'
 import CalendarHeader from './CalendarHeader'
-import WeeklyCalendar from './WeeklyCalendar'
 
 const CalendarView: React.FC = () => {
  const [selectedDate, setSelectedDate] = useState<string>('')
@@ -13,7 +12,7 @@ const CalendarView: React.FC = () => {
  const [isChangingMonth, setIsChangingMonth] = useState<boolean>(false)
  const [selectedEvent, setSelectedEvent] = useState<any>(null)
  const [viewCard, setViewCard] = useState<boolean>(false)
- const [type, setType] = useState<'month' | 'week' | 'year'>('month') // Track calendar type
+ const [type, setType] = useState<'month' | 'week' | 'year'>('month')
 
  const handleSelect = (date: Dayjs) => {
   const today = dayjs()
@@ -22,9 +21,11 @@ const CalendarView: React.FC = () => {
    date.isAfter(today.startOf('day'))
   ) {
    setSelectedDate(dayjs(date).format('DD-MM-YYYY'))
+   setCurrentMonth(date) // Update currentMonth
    setVisible(true)
    setViewCard(false)
    console.log('selected date', dayjs(date).format('DD-MM-YYYY'))
+   return selectedDate
   }
  }
 
@@ -44,17 +45,20 @@ const CalendarView: React.FC = () => {
   return date.isBefore(today, 'day')
  }
 
+ const handleTypeChange = (type: string) => {
+  if (type === 'week' || type === 'month' || type === 'year') {
+   setType(type)
+  }
+ }
+
  return (
   <div>
-   {/* Always render the CalendarHeader */}
    <CalendarHeader
     value={currentMonth}
     type={type}
     onChange={setCurrentMonth}
-    onTypeChange={setType}
+    onTypeChange={handleTypeChange}
    />
-
-   {/* Conditionally render WeeklyCalendar or AntD Calendar */}
    {type === 'week' ? null : (
     <Calendar
      value={currentMonth}
@@ -71,7 +75,6 @@ const CalendarView: React.FC = () => {
      )}
     />
    )}
-
    <AddEventModal
     visible={visible}
     setVisible={setVisible}
