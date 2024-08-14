@@ -14,21 +14,16 @@ const RenderCell: React.FC<RenderCellProps> = ({date, onEventClick}) => {
   <>
    <ul>
     {events.map((event, index) => {
-     const during = event.during
-     let startTime, endTime
-     if (Array.isArray(during)) {
-      ;[startTime, endTime] = during
-     } else {
-      startTime = endTime = undefined
-     }
      return (
       <Tooltip
        key={index}
        placement='left'
        title={`${event.title} (${
-        startTime ? dayjs(startTime).format('hh:mm A') : 'N/A'
+        event.during[0] ? dayjs(event.during[0]).format('hh:mm A') : 'N/A'
        } - 
-            ${endTime ? dayjs(endTime).format('hh:mm A') : 'N/A'})`}
+            ${
+             event.during[1] ? dayjs(event.during[1]).format('hh:mm A') : 'N/A'
+            })`}
       >
        <li
         className='bg-[#227E22] px-3 rounded-md hover:bg-[#1b641b]'
@@ -37,19 +32,15 @@ const RenderCell: React.FC<RenderCellProps> = ({date, onEventClick}) => {
          onEventClick(event)
         }}
        >
-        <Paragraph
-         className='text-[#f9f9f9] text-[8px] md:text-[10px] lg:text-[12px] xl:text-[14px]'
-         ellipsis={{
-          rows: 1,
-          expandable: false,
-          suffix: ` (${
-           startTime ? dayjs(startTime).format('hh:mm A') : 'N/A'
-          } - 
-            ${endTime ? dayjs(endTime).format('hh:mm A') : 'N/A'})`,
-         }}
-        >
+        <Paragraph className='text-[#f9f9f9] text-[8px] md:text-[10px] lg:text-[12px] xl:text-[14px]'>
          {event.title}
         </Paragraph>
+        <span className='text-[#f9f9f9] text-[8px] md:text-[10px] lg:text-[12px] xl:text-[14px]'>{` (${
+         event.during[0] ? dayjs(event.during[0]).format('hh:mm A') : 'N/A'
+        } - 
+            ${
+             event.during[1] ? dayjs(event.during[1]).format('hh:mm A') : 'N/A'
+            })`}</span>
        </li>
       </Tooltip>
      )
