@@ -93,6 +93,7 @@ const FormFields: React.FC<FormFieldsProps> = ({field, form, viewCard}) => {
        <Row gutter={24}>
         <Col xs={24} sm={12}>
          <Form.Item
+          noStyle
           name={[field.name, 'startDate']}
           rules={[
            {
@@ -117,6 +118,7 @@ const FormFields: React.FC<FormFieldsProps> = ({field, form, viewCard}) => {
          'during',
          <Col xs={24} sm={12}>
           <Form.Item
+           noStyle
            name={[field.name, 'during']}
            rules={[
             {
@@ -130,15 +132,24 @@ const FormFields: React.FC<FormFieldsProps> = ({field, form, viewCard}) => {
                field.name,
                'startDate',
               ])
-              if (value && value[0] && startDate) {
+              if (value[0] && value[1]) {
                const startDateTime = dayjs(startDate)
                 .hour(dayjs(value[0]).hour())
                 .minute(dayjs(value[0]).minute())
+               const startTimeValue = dayjs(value[0])
+               const endTimeValue = dayjs(value[1])
+
                if (startDateTime.isBefore(dayjs())) {
                 return Promise.reject('Start time must be after current time')
                }
-               if (dayjs(value[0]).isSame(dayjs(value[1]), 'minute')) {
-                return Promise.reject('Start time must be before end time')
+
+               if (startTimeValue.isSame(endTimeValue, 'minute')) {
+                const newEndTime = startTimeValue.add(1, 'hour')
+                form.setFieldValue(
+                 ['events', field.name, 'during'],
+                 [value[0], dayjs(newEndTime)],
+                )
+                return Promise.resolve()
                }
               }
               return Promise.resolve()
@@ -164,7 +175,12 @@ const FormFields: React.FC<FormFieldsProps> = ({field, form, viewCard}) => {
       <Divider></Divider>
       <Form.Item label={<User size={14} />} name={[field.name, 'invitedUsers']}>
        <Select
+        allowClear
+        showSearch
+        optionFilterProp='label'
+        filterOption={filterOption}
         placeholder='Select user...'
+        tagRender={() => <></>}
         mode='multiple'
         className='w-full'
         options={userOptions}
@@ -178,7 +194,9 @@ const FormFields: React.FC<FormFieldsProps> = ({field, form, viewCard}) => {
 
       <Form.Item>
        <Typography.Paragraph>User list:</Typography.Paragraph>
-       <ul>
+       <ul
+        className={allUsers.length > 4 ? 'max-h-[192px] overflow-y-auto' : ''}
+       >
         {allUsers.map((user: string) => {
          return (
           <li key={user}>

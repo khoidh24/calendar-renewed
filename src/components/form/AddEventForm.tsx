@@ -81,7 +81,7 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
     form={form}
     name='events_form'
     disabled={viewCard}
-    className='form-detail max-w-500'
+    className='form-detail max-w-600 p-4'
     onValuesChange={() => setUnsavedChanges(true)} // Track unsaved changes
     variant={viewCard && isEdit ? 'borderless' : 'outlined'}
     initialValues={

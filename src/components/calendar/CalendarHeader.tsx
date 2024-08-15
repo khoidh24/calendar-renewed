@@ -43,9 +43,18 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   )
  }
 
+ const getWeekOfMonth = (date: Dayjs) => {
+  const startOfMonth = date.startOf('month')
+  const weekNumber = date.diff(startOfMonth, 'week') + 1
+  return weekNumber
+ }
+
  return (
-  <div>
-   <div className='flex justify-between items-center p-4 mt-8 mb-4'>
+  <>
+   <div
+    className='flex justify-between items-center p-4 mt-8 mb-4 sticky top-0 w-full z-1000 headerview'
+    style={{position: '-webkit-sticky'}}
+   >
     <div className='flex flex-1 justify-start'>
      <Button
       type='text'
@@ -58,7 +67,6 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
        onChange(newValue)
        setCurrentDate(newValue)
       }}
-      className='text-gray-600 hover:text-blue-600'
      />
      <Button
       type='text'
@@ -71,11 +79,16 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
        onChange(newValue)
        setCurrentDate(newValue)
       }}
-      className='text-gray-600 hover:text-blue-600'
      />
     </div>
     <div className='flex flex-1 justify-center'>
-     <h1 className='font-bold text-xl'>{value.format('DD MMMM YYYY')}</h1>
+     <h1 className='font-bold text-xl'>
+      {type === 'week'
+       ? `Week ${getWeekOfMonth(value)} - ${value.format('MMM YYYY')}`
+       : type === 'year'
+       ? value.format('MMM YYYY')
+       : value.format('DD MMMM YYYY')}
+     </h1>
     </div>
     <div className='flex items-center justify-end flex-1'>
      <Select
@@ -120,7 +133,7 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
     </div>
    </div>
    {type === 'week' && <WeeklyCalendar currentDate={currentDate} />}
-  </div>
+  </>
  )
 }
 
