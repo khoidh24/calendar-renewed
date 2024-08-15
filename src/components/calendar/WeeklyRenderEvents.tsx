@@ -1,23 +1,31 @@
 import React from 'react'
-import dayjs from 'dayjs'
+import dayjs, {Dayjs} from 'dayjs'
 import useCalendar from '../../storage/store'
+import {Tooltip} from 'antd'
 
-const WeeklyRenderEvents: React.FC = () => {
+type WeeklyRenderEventsProps = {
+ currentDate: Dayjs
+ onEventClick: (event: any) => void
+}
+
+const WeeklyRenderEvents: React.FC<WeeklyRenderEventsProps> = ({
+ currentDate,
+ onEventClick,
+}) => {
  const events = useCalendar((state) => state.events)
  const groupedEvents: {[key: string]: any[]} = {}
 
  // Get the start and end of the selected week
- const startOfWeek = dayjs(new Date()).startOf('week')
- const endOfWeek = dayjs(new Date()).endOf('week')
+ const startOfWeek = dayjs(currentDate).startOf('week')
+ const endOfWeek = dayjs(currentDate).endOf('week')
 
  // Filter events that fall within the selected week
  const weeklyEvents = events.filter((event) => {
-  const eventStart = dayjs(event.during[0])
-  const eventEnd = dayjs(event.during[1])
+  const eventDate = dayjs(event.startDate, 'DD-MM-YYYY')
   return (
-   (eventStart.isAfter(startOfWeek) && eventStart.isBefore(endOfWeek)) ||
-   (eventEnd.isAfter(startOfWeek) && eventEnd.isBefore(endOfWeek)) ||
-   (eventStart.isBefore(startOfWeek) && eventEnd.isAfter(endOfWeek))
+   (eventDate.isAfter(startOfWeek) && eventDate.isBefore(endOfWeek)) ||
+   eventDate.isSame(startOfWeek) ||
+   eventDate.isSame(endOfWeek)
   )
  })
 
@@ -37,47 +45,52 @@ const WeeklyRenderEvents: React.FC = () => {
   <>
    {Object.keys(groupedEvents).flatMap((key) => {
     const eventsInGroup = groupedEvents[key]
-    const widthPercentage = 100 / eventsInGroup.length
 
-    return eventsInGroup.map((event, index) => {
+    return eventsInGroup.map((event) => {
      const startTime = dayjs(event.during[0])
      const endTime = dayjs(event.during[1])
      const durationInMinutes = endTime.diff(startTime, 'minute')
 
      const startRow =
       startTime.hour() * 12 + Math.floor(startTime.minute() / 5) + 2
-     const dayIndex = startTime.day()
-
+     const dayIndex = dayjs(event.startDate, 'DD-MM-YYYY').day() + 1
      return (
-      <li
+      <Tooltip
        key={event.id}
-       className={`relative mt-[1px] flex col-start-${dayIndex}`}
-       style={{
-        gridRow: `${startRow} / span ${durationInMinutes / 5}`,
-       }}
+       placement='left'
+       title={`${event.title} (${
+        event.during[0] ? dayjs(event.during[0]).format('hh:mm A') : 'N/A'
+       } - 
+            ${
+             event.during[1] ? dayjs(event.during[1]).format('hh:mm A') : 'N/A'
+            })`}
       >
-       <div
-        className={`absolute flex flex-col rounded-lg p-2 text-xs leading-5 hover:bg-blue-100 ${
-         index % 2 === 0 ? 'bg-blue-200' : 'bg-green-200'
-        } shadow-lg border border-gray-300`}
+       <li
+        className={`relative flex col-start-${dayIndex}`}
         style={{
-         width: `${widthPercentage}%`,
-         inset: `4px calc(${
-          100 - widthPercentage * (index + 1)
-         }% + 4px) 4px calc(${widthPercentage * index}% + ${
-          index === 0 ? '4px' : '-6px'
-         })`,
+         gridRow: `${startRow} / span ${durationInMinutes / 5}`,
         }}
        >
-        <p className='order-1 font-semibold text-blue-700 text-xs'>
-         {event.title}
-        </p>
-        <p className='text-blue-500 text-xs'>
-         {startTime.format('h:mm A')} - {endTime.format('h:mm A')}
-        </p>
-        <p className='text-gray-500 text-xs'>{event.description}</p>
-       </div>
-      </li>
+        <div
+         onClick={(e) => {
+          e.stopPropagation()
+          onEventClick(event)
+         }}
+         className={`absolute flex flex-col rounded-lg p-2 text-xs leading-5 hover:bg-[#1b641b] bg-[#227E22] shadow-lg border border-gray-300 cursor-pointer`}
+         style={{
+          inset: `4px 4px 4px 2px`,
+         }}
+        >
+         <p className='order-1 font-semibold text-white text-xs'>
+          {event.title}
+         </p>
+         <p className='text-white text-xs'>
+          {startTime.format('h:mm A')} - {endTime.format('h:mm A')}
+         </p>
+         <p className='text-gray-100 text-xs'>{event.startDate}</p>
+        </div>
+       </li>
+      </Tooltip>
      )
     })
    })}

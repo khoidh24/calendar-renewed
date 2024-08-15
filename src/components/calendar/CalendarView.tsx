@@ -8,10 +8,10 @@ import CalendarHeader from './CalendarHeader'
 const CalendarView: React.FC = () => {
  const [selectedDate, setSelectedDate] = useState<string>('')
  const [visible, setVisible] = useState<boolean>(false)
+ const [viewCard, setViewCard] = useState<boolean>(false)
+ const [selectedEvent, setSelectedEvent] = useState<any>(null)
  const [currentMonth, setCurrentMonth] = useState<Dayjs>(dayjs())
  const [isChangingMonth, setIsChangingMonth] = useState<boolean>(false)
- const [selectedEvent, setSelectedEvent] = useState<any>(null)
- const [viewCard, setViewCard] = useState<boolean>(false)
  const [type, setType] = useState<'month' | 'week' | 'year'>('month')
 
  const handleSelect = (date: Dayjs) => {
@@ -52,29 +52,31 @@ const CalendarView: React.FC = () => {
  }
 
  return (
-  <div>
+  <div className=''>
    <CalendarHeader
     value={currentMonth}
     type={type}
     onChange={setCurrentMonth}
     onTypeChange={handleTypeChange}
    />
-   {type === 'week' ? null : (
-    <Calendar
-     value={currentMonth}
-     mode={type}
-     onSelect={(date) => {
-      if (!isChangingMonth && !isDateDisabled(date)) {
-       handleSelect(date)
-      }
-     }}
-     headerRender={() => null}
-     onPanelChange={handlePanelChange}
-     cellRender={(date) => (
-      <RenderCell date={date} onEventClick={handleEventClick} />
-     )}
-    />
-   )}
+   <div className='relative'>
+    {type === 'week' ? null : (
+     <Calendar
+      value={currentMonth}
+      mode={type}
+      onSelect={(date) => {
+       if (!isChangingMonth && !isDateDisabled(date)) {
+        handleSelect(date)
+       }
+      }}
+      headerRender={() => null}
+      onPanelChange={handlePanelChange}
+      cellRender={(date) => (
+       <RenderCell date={date} onEventClick={handleEventClick} />
+      )}
+     />
+    )}
+   </div>
    <AddEventModal
     visible={visible}
     setVisible={setVisible}
