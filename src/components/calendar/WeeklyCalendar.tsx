@@ -4,6 +4,7 @@ import weekOfYear from 'dayjs/plugin/weekOfYear'
 import isoWeek from 'dayjs/plugin/isoWeek'
 import WeeklyRenderEvents from './WeeklyRenderEvents'
 import AddEventModal from '../form/AddEventModal'
+import {message} from 'antd'
 
 type WeeklyCalendarProps = {
  currentDate: Dayjs
@@ -17,7 +18,8 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({currentDate}) => {
  const [visible, setVisible] = useState<boolean>(false)
  const [viewCard, setViewCard] = useState<boolean>(false)
  const [selectedEvent, setSelectedEvent] = useState<any>(null)
- const [selectedDate, setSelectedDate] = useState<string>('')
+ const [clickedDay, setClickedDay] = useState<string>('')
+ const [selectedTime, setSelectedTime] = useState<string>('')
 
  const hourRef = useRef<HTMLDivElement[]>([])
  const redLineRef = useRef<HTMLDivElement>(null)
@@ -42,11 +44,9 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({currentDate}) => {
    const percentageOfDay = (minutesSinceStartOfDay / totalMinutesInDay) * 100
 
    if (redLineRef.current) {
-    redLineRef.current.style.top = `calc(${percentageOfDay}% + 21px)`
+    redLineRef.current.style.top = `calc(${percentageOfDay}% + 3% + 3px)`
    }
   }
-
-  console.log(dayjs().diff(dayjs().startOf('day'), 'minute'))
 
   updateRedLinePosition()
   const intervalId = setInterval(updateRedLinePosition, 60000) // Update every minute
@@ -71,8 +71,16 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({currentDate}) => {
   const startTime = dayjs().startOf('day')
 
   for (let i = 0; i < 24; i++) {
-   const time = startTime.add(i, 'hour')
-   hours.push(time.format('h A'))
+   const hourTime = startTime.add(i, 'hour')
+   const halfPast = startTime.add(i, 'hour').subtract(30, 'minute')
+
+   hours.push({
+    label: hourTime.format('h A'),
+    time: [
+     halfPast.format('DD-MM-YYYY h:mm A'),
+     hourTime.format('DD-MM-YYYY h:mm A'),
+    ],
+   })
   }
 
   return hours
@@ -84,10 +92,28 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({currentDate}) => {
   setViewCard(true)
  }
 
+ const handleDaySelect = (index: number, time: string) => {
+  const selectedDate = dayjs().day(index)
+  const now = dayjs()
+
+  const selectedDateTime = dayjs(time, 'DD-MM-YYYY h:mm A')
+
+  if (selectedDateTime.isBefore(now)) {
+   return message.info('Cannot select a time in the past')
+  }
+
+  const day = dayjs(selectedDate).format('DD-MM-YYYY')
+  setClickedDay(day)
+  setSelectedTime(selectedDateTime.format('h:mm A'))
+  setViewCard(false)
+  setSelectedEvent(null)
+  setVisible(true)
+ }
+
  return (
   <div className='relative'>
    <div
-    className='sticky top-[64px] z-30 flex-none shadow-md pr-8 border-[1px] bg-white'
+    className='sticky top-[64px] z-[900] flex-none shadow-md pr-8 border-[1px] bg-white'
     style={{position: '-webkit-sticky'}}
    >
     <div className='mr-[-1px] grid-cols-7 text-sm leading-6 grid'>
@@ -96,6 +122,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({currentDate}) => {
       <div
        className='flex items-center justify-center py-3 border-r'
        key={index}
+       onClick={() => handleDaySelect(index, '')}
       >
        <span>
         {`${date.format('ddd')} `}
@@ -118,17 +145,40 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({currentDate}) => {
     <div className='grid flex-[1_1_auto] grid-cols-1 grid-rows-1'>
      <div className='col-start-1 col-end-2 row-start-1 grid grid-rows-48-auto'>
       <div className='row-end-1 h-7' />
-      {generateHourLabels().map((label, index) => (
+      {generateHourLabels().map((hour, rowIndex) => (
        <>
-        <div className='border' key={index}>
+        <div className='border' key={rowIndex}>
+         <div className='w-full h-full grid grid-cols-7'>
+          {[...Array(7)].map((_, colIndex) => (
+           <div
+            key={colIndex}
+            className={`border-r-[1px] row-span-full col-start-${colIndex + 1}`}
+            onClick={() => handleDaySelect(colIndex, hour.time[0])}
+            style={{zIndex: 100}}
+           ></div>
+          ))}
+          <div className='col-start-8 w-8'></div>
+         </div>
          <div
           className='sticky left-0 z-20 -ml-14 -mt-[0.625rem] w-14 pr-2 text-right text-[0.75rem] leading-5 text-gray-400'
-          ref={(el) => (hourRef.current[index] = el!)}
+          ref={(el) => (hourRef.current[rowIndex] = el!)}
          >
-          {label}
+          {hour.label}
          </div>
         </div>
-        <div></div>
+        <div>
+         <div className='w-full h-full grid grid-cols-7'>
+          {[...Array(7)].map((_, colIndex) => (
+           <div
+            key={colIndex}
+            className={`border-r-[1px] row-span-full col-start-${colIndex + 1}`}
+            onClick={() => handleDaySelect(colIndex, hour.time[1])}
+            style={{zIndex: 100}}
+           ></div>
+          ))}
+          <div className='col-start-8 w-8'></div>
+         </div>
+        </div>
        </>
       ))}
      </div>
@@ -144,7 +194,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({currentDate}) => {
      </div>
      <div
       ref={redLineRef}
-      className='absolute left-0 w-full h-[2px] bg-red-500 z-[100]'
+      className='absolute left-0 w-full h-[2px] bg-red-500 z-[500]'
       style={{top: '0%'}}
      ></div>
      <ol className='border-l-[1px] list-none m-0 p-0 col-start-1 col-end-2 row-start-1 grid grid-cols-7 pr-8 grid-rows-288-rows-auto'>
@@ -158,7 +208,8 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({currentDate}) => {
    <AddEventModal
     visible={visible}
     setVisible={setVisible}
-    selectedDate={selectedDate}
+    selectedDate={clickedDay}
+    selectedTime={selectedTime}
     event={selectedEvent}
     viewCard={viewCard}
     setViewCard={setViewCard}

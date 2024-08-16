@@ -10,10 +10,17 @@ const RenderCell: React.FC<RenderCellProps> = ({date, onEventClick}) => {
  const {getEventsByDate} = useCalendar()
  const events = getEventsByDate(dayjs(date).format('DD-MM-YYYY'))
 
+ // Sort events by the start time (during[0])
+ const sortedEvents = events.sort((a, b) => {
+  const timeA = a.during[0] ? dayjs(a.during[0]).valueOf() : 0
+  const timeB = b.during[0] ? dayjs(b.during[0]).valueOf() : 0
+  return timeA - timeB
+ })
+
  return (
   <>
    <ul>
-    {events.map((event, index) => {
+    {sortedEvents.map((event, index) => {
      return (
       <Tooltip
        key={index}

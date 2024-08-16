@@ -1,38 +1,42 @@
-import {Button, Form, message, Modal} from 'antd'
+import {Button, Form, message} from 'antd'
 import dayjs from 'dayjs'
 import FormList from './FormList'
 import useCalendar from '../../storage/store'
 import {AddEventFormProps, Event} from '../../types/types'
-import {useState} from 'react'
 import {v4 as uuidv4} from 'uuid'
 import roundToNearest15Minutes from '../../utils/roundToFifteenMinutes'
+import {useEffect} from 'react'
 
 const AddEventForm: React.FC<AddEventFormProps> = ({
  date,
  setVisible,
  viewCard,
- setViewCard,
  event,
  setUnsavedChanges,
+ selectedTime,
+ isEdit,
+ setIsEdit,
 }) => {
  const [form] = Form.useForm()
- const [isEdit, setIsEdit] = useState<boolean>(false)
  const addEvent = useCalendar((state) => state.addEvent)
  const updateEvent = useCalendar((state) => state.updateEvent)
- const removeEvent = useCalendar((state) => state.removeEvent)
 
- const clearDefaultValues = () => {
-  const currentValues = form.getFieldsValue()
-  const updatedEvents = currentValues.events.map((event: Event) => {
-   return {
-    ...event,
-    title: event.title === '(No title event)' ? '' : event.title,
-    description:
-     event.description === '(No description provided)' ? '' : event.description,
-   }
-  })
-  form.setFieldsValue({events: updatedEvents})
- }
+ useEffect(() => {
+  if (isEdit) {
+   const currentValues = form.getFieldsValue()
+   const updatedEvents = currentValues.events.map((event: Event) => {
+    return {
+     ...event,
+     title: event.title === '(No title event)' ? '' : event.title,
+     description:
+      event.description === '(No description provided)'
+       ? ''
+       : event.description,
+    }
+   })
+   form.setFieldsValue({events: updatedEvents})
+  }
+ }, [isEdit, form])
 
  const onFinish = (values: {events: Event[]}) => {
   const updatedValues = values.events.map((event: Event) => {
@@ -54,25 +58,10 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
    updatedValues.forEach((event: Event) => addEvent(event))
    message.success('Event added successfully!', 2)
   }
+
   console.log('Received values of form:', {events: updatedValues})
   setUnsavedChanges(false) // Reset unsaved changes state
   setVisible(false)
- }
-
- const showDeleteConfirm = () => {
-  Modal.confirm({
-   centered: true,
-   title: 'Are you sure delete this event?',
-   content: 'This action cannot be undone.',
-   okText: 'Yes',
-   okType: 'danger',
-   cancelText: 'No',
-   onOk() {
-    removeEvent(event.id)
-    setVisible(false)
-    message.success('Event deleted successfully!', 2)
-   },
-  })
  }
 
  return (
@@ -83,7 +72,6 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
     disabled={viewCard}
     className='form-detail max-w-600 p-4'
     onValuesChange={() => setUnsavedChanges(true)} // Track unsaved changes
-    variant={viewCard && isEdit ? 'borderless' : 'outlined'}
     initialValues={
      viewCard
       ? {
@@ -105,10 +93,17 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
          events: [
           {
            startDate: dayjs(date, 'DD-MM-YYYY'),
-           during: [
-            roundToNearest15Minutes(dayjs()),
-            roundToNearest15Minutes(dayjs()).add(1, 'hour'),
-           ],
+           during: selectedTime
+            ? [
+               roundToNearest15Minutes(dayjs(selectedTime, 'hh:mm A')),
+               roundToNearest15Minutes(
+                dayjs(selectedTime, 'hh:mm A').add(30, 'minute'),
+               ),
+              ]
+            : [
+               roundToNearest15Minutes(dayjs()),
+               roundToNearest15Minutes(dayjs()).add(1, 'hour'),
+              ],
           },
          ],
         }
@@ -137,36 +132,6 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
      </Form.Item>
     )}
    </Form>
-   {viewCard && (
-    <>
-     {dayjs(event.startDate, 'DD-MM-YYYY').startOf('day').valueOf() >=
-      dayjs().startOf('day').valueOf() && (
-      <Button
-       type='primary'
-       className='w-full shadow-lg'
-       onClick={() => {
-        clearDefaultValues()
-        setIsEdit(true)
-        setViewCard(false)
-        message.open({
-         type: 'info',
-         content: 'You are in edit mode.',
-         duration: 2,
-        })
-       }}
-      >
-       Edit
-      </Button>
-     )}
-     <Button
-      danger
-      className='w-full mt-8 shadow-lg'
-      onClick={showDeleteConfirm}
-     >
-      Delete
-     </Button>
-    </>
-   )}
   </>
  )
 }
