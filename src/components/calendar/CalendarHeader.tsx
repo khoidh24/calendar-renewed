@@ -52,8 +52,8 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
  return (
   <>
    <div
-    className='flex justify-between items-center p-4 mt-8 mb-4 sticky top-0 w-full z-1000 headerview'
-    style={{position: '-webkit-sticky'}}
+    className='flex justify-between items-center p-4 mt-8 mb-4 sticky top-0 w-full headerview'
+    style={{position: '-webkit-sticky', zIndex: 900}}
    >
     <div className='flex flex-1 justify-start'>
      <Button

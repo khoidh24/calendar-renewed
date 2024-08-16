@@ -52,7 +52,7 @@ const WeeklyRenderEvents: React.FC<WeeklyRenderEventsProps> = ({
      const durationInMinutes = endTime.diff(startTime, 'minute')
 
      const startRow =
-      startTime.hour() * 12 + Math.floor(startTime.minute() / 5) + 2
+      startTime.hour() * 12 + Math.floor(startTime.minute() / 5) + 8
      const dayIndex = dayjs(event.startDate, 'DD-MM-YYYY').day() + 1
      return (
       <Tooltip
@@ -66,19 +66,21 @@ const WeeklyRenderEvents: React.FC<WeeklyRenderEventsProps> = ({
             })`}
       >
        <li
-        className={`relative flex col-start-${dayIndex}`}
+        className='relative flex'
         style={{
          gridRow: `${startRow} / span ${durationInMinutes / 5}`,
+         gridColumn: dayIndex,
+         zIndex: 200,
+         position: 'relative',
         }}
        >
         <div
-         onClick={(e) => {
-          e.stopPropagation()
+         onClick={() => {
           onEventClick(event)
          }}
          className={`absolute flex flex-col rounded-lg p-2 text-xs leading-5 hover:bg-[#1b641b] bg-[#227E22] shadow-lg border border-gray-300 cursor-pointer`}
          style={{
-          inset: `4px 4px 4px 2px`,
+          inset: `2px 2px 2px 2px`,
          }}
         >
          <p className='order-1 font-semibold text-white text-xs'>
@@ -87,7 +89,6 @@ const WeeklyRenderEvents: React.FC<WeeklyRenderEventsProps> = ({
          <p className='text-white text-xs'>
           {startTime.format('h:mm A')} - {endTime.format('h:mm A')}
          </p>
-         <p className='text-gray-100 text-xs'>{event.startDate}</p>
         </div>
        </li>
       </Tooltip>

@@ -30,6 +30,7 @@ export interface AddEventModalProps {
  viewCard: boolean
  setViewCard: (viewCard: boolean) => void
  setUnsavedChanges?: (unsavedChanges: boolean) => void
+ selectedTime?: string
 }
 
 export interface CalendarHeaderProps {
@@ -85,6 +86,9 @@ export interface AddEventFormProps {
  setViewCard: (viewCard: boolean) => void
  event: Event
  setUnsavedChanges: (unsavedChanges: boolean) => void
+ selectedTime?: string
+ isEdit: boolean
+ setIsEdit: (isEdit: boolean) => void
 }
 
 export interface EventContextProps {

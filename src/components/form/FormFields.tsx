@@ -57,6 +57,13 @@ const FormFields: React.FC<FormFieldsProps> = ({field, form, viewCard}) => {
  }
 
  const today = dayjs(new Date())
+ const startDate = form?.getFieldValue(['events', field.name, 'startDate'])
+ const during = form?.getFieldValue(['events', field.name, 'during'])
+ const isEventPassed =
+  viewCard &&
+  (dayjs(startDate).isBefore(today, 'day') ||
+   (dayjs(startDate).isSame(today, 'day') &&
+    dayjs(during?.[0]).isBefore(today)))
 
  return (
   <>
@@ -93,7 +100,6 @@ const FormFields: React.FC<FormFieldsProps> = ({field, form, viewCard}) => {
        <Row gutter={24}>
         <Col xs={24} sm={12}>
          <Form.Item
-          noStyle
           name={[field.name, 'startDate']}
           rules={[
            {
@@ -101,6 +107,7 @@ const FormFields: React.FC<FormFieldsProps> = ({field, form, viewCard}) => {
             message: 'Start date is required',
            },
           ]}
+          className={`${viewCard ? 'mb-0' : ''}`}
          >
           <DatePicker
            placeholder='Start date...'
@@ -118,7 +125,7 @@ const FormFields: React.FC<FormFieldsProps> = ({field, form, viewCard}) => {
          'during',
          <Col xs={24} sm={12}>
           <Form.Item
-           noStyle
+           className={`${viewCard ? 'mb-0' : ''}`}
            name={[field.name, 'during']}
            rules={[
             {
@@ -132,7 +139,8 @@ const FormFields: React.FC<FormFieldsProps> = ({field, form, viewCard}) => {
                field.name,
                'startDate',
               ])
-              if (value[0] && value[1]) {
+
+              if (value && value[0] && value[1]) {
                const startDateTime = dayjs(startDate)
                 .hour(dayjs(value[0]).hour())
                 .minute(dayjs(value[0]).minute())
@@ -151,6 +159,8 @@ const FormFields: React.FC<FormFieldsProps> = ({field, form, viewCard}) => {
                 )
                 return Promise.resolve()
                }
+              } else {
+               return Promise.reject()
               }
               return Promise.resolve()
              },
@@ -364,18 +374,14 @@ const FormFields: React.FC<FormFieldsProps> = ({field, form, viewCard}) => {
       </Form.Item>
      </>
     )}
-    {viewCard &&
-     dayjs(form.getFieldValue(['events', field.name, 'startDate'])).isBefore(
-      today,
-      'day',
-     ) && (
-      <>
-       <Divider></Divider>
-       <Typography.Paragraph className=''>
-        <strong>NOTE:</strong> This event has passed and is no longer editable.
-       </Typography.Paragraph>
-      </>
-     )}
+    {isEventPassed && (
+     <>
+      <Divider></Divider>
+      <Typography.Paragraph className=''>
+       <strong>NOTE:</strong> This event has passed and is no longer editable.
+      </Typography.Paragraph>
+     </>
+    )}
    </Form.Item>
   </>
  )
