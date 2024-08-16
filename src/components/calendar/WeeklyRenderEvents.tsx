@@ -41,6 +41,9 @@ const WeeklyRenderEvents: React.FC<WeeklyRenderEventsProps> = ({
   groupedEvents[key].push(event)
  })
 
+ // Create a map to track the number of events per startRow
+ const startRowCount: {[key: number]: number} = {}
+
  return (
   <>
    {Object.keys(groupedEvents).flatMap((key) => {
@@ -54,6 +57,15 @@ const WeeklyRenderEvents: React.FC<WeeklyRenderEventsProps> = ({
      const startRow =
       startTime.hour() * 12 + Math.floor(startTime.minute() / 5) + 8
      const dayIndex = dayjs(event.startDate, 'DD-MM-YYYY').day() + 1
+
+     // Increment the count for the startRow
+     if (!startRowCount[startRow]) {
+      startRowCount[startRow] = 0
+     }
+     startRowCount[startRow] += 1
+
+     const widthPercentage = 100 / startRowCount[startRow]
+
      return (
       <Tooltip
        key={event.id}
@@ -72,21 +84,22 @@ const WeeklyRenderEvents: React.FC<WeeklyRenderEventsProps> = ({
          gridColumn: dayIndex,
          zIndex: 200,
          position: 'relative',
+         width: `${widthPercentage}%`,
         }}
        >
         <div
          onClick={() => {
           onEventClick(event)
          }}
-         className={`absolute flex flex-col rounded-lg p-2 text-xs leading-5 hover:bg-[#1b641b] bg-[#227E22] shadow-lg border border-gray-300 cursor-pointer`}
+         className={`overflow-hidden absolute flex flex-col rounded-lg p-2 text-xs leading-5 hover:bg-[#1b641b] bg-[#227E22] shadow-lg border border-gray-300 cursor-pointer`}
          style={{
           inset: `2px 2px 2px 2px`,
          }}
         >
-         <p className='order-1 font-semibold text-white text-xs'>
+         <p className='order-1 font-semibold text-white text-xs overflow-hidden text-ellipsis whitespace-nowrap'>
           {event.title}
          </p>
-         <p className='text-white text-xs'>
+         <p className='text-white text-xs overflow-hidden text-ellipsis whitespace-nowrap'>
           {startTime.format('h:mm A')} - {endTime.format('h:mm A')}
          </p>
         </div>
